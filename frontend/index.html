@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURA | AI Supply Chain Risk Intelligence</title>
+  <meta name="description" content="Predict demand spikes, anticipate inventory stockouts, and decide what to do before disruptions impact customers.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Clean Minimalist Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2.2">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+          </svg>
+        </div>
+        <div class="brand-info">
+          <span class="brand-title">AURA <strong>SUPPLY CHAIN</strong></span>
+          <span class="brand-badge">AI Risk Intelligence</span>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <button class="btn btn-outline btn-sm" id="btn-theme-toggle">
+          <span id="theme-btn-text">Dark Mode</span>
+        </button>
+        <button class="btn btn-primary btn-sm" id="btn-open-briefing">
+          Executive Briefing
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="page-container">
+
+    <!-- Hero Header -->
+    <section class="hero-section">
+      <div class="hero-tag">OPERATIONAL CONTROL TOWER &bull; 500 PRODUCTS &bull; 10 WAREHOUSES</div>
+      <h1 class="hero-title">Predict Demand Spikes. Stop Stockouts Before They Happen.</h1>
+      <p class="hero-subtitle">
+        Our Machine Learning model predicts customer demand over the next 28 days, identifies which products will run out of stock first, quantifies the exact financial revenue at risk, and prescribes the optimal inventory fix.
+      </p>
+    </section>
+
+    <!-- Top 4 Executive KPI Cards -->
+    <section class="kpis-grid">
+      <div class="kpi-card danger">
+        <div class="kpi-header">
+          <span class="kpi-title">Revenue at Risk</span>
+          <span class="kpi-tag-pill danger">Next 30 Days</span>
+        </div>
+        <div class="kpi-number" id="kpi-total-loss">$666,342</div>
+        <div class="kpi-desc"><strong id="kpi-loss-7d">$33,866</strong> at risk in immediate 7-day crisis window</div>
+      </div>
+
+      <div class="kpi-card warning">
+        <div class="kpi-header">
+          <span class="kpi-title">Imminent Stockouts</span>
+          <span class="kpi-tag-pill warning">&lt; 7 Days of Stock</span>
+        </div>
+        <div class="kpi-number" id="kpi-stockouts-count">1,059</div>
+        <div class="kpi-desc">Products running out before scheduled deliveries arrive</div>
+      </div>
+
+      <div class="kpi-card info">
+        <div class="kpi-header">
+          <span class="kpi-title">ML Model Fit</span>
+          <span class="kpi-tag-pill info">HistGradientBoosting</span>
+        </div>
+        <div class="kpi-number" id="kpi-model-r2">R² 0.637</div>
+        <div class="kpi-desc">Trained on 15 features (lags, rolling stats, holidays &amp; SNAP)</div>
+      </div>
+
+      <div class="kpi-card success">
+        <div class="kpi-header">
+          <span class="kpi-title">Protected Savings</span>
+          <span class="kpi-tag-pill success">Live Counter</span>
+        </div>
+        <div class="kpi-number text-success" id="kpi-savings-secured">$0</div>
+        <div class="kpi-desc"><span id="kpi-actions-executed">0</span> recommendations approved and dispatched</div>
+      </div>
+    </section>
+
+    <!-- =============================================================== -->
+    <!-- SECTION 1: THE INTERACTIVE AI PREDICTION EXPLORER               -->
+    <!-- (The Core 'Aha!' Visual Story)                                   -->
+    <!-- =============================================================== -->
+    <section class="section-card">
+      <div class="section-header">
+        <div>
+          <span class="step-badge">INTERACTIVE PREDICTION EXPLORER</span>
+          <h2 class="section-title">See How the Model Predicts &amp; Solves a Stockout</h2>
+          <p class="section-desc">Pick any product or warehouse below to see how Machine Learning forecast demand compares to current on-hand inventory.</p>
+        </div>
+
+        <!-- Quick Demo Presets -->
+        <div class="preset-buttons">
+          <span class="preset-label">Quick Examples:</span>
+          <button class="preset-btn active" id="demo-btn-critical">Critical Stockout (Day 4)</button>
+          <button class="preset-btn" id="demo-btn-spike">Demand Spike (+65%)</button>
+          <button class="preset-btn" id="demo-btn-healthy">Healthy Inventory</button>
+        </div>
+      </div>
+
+      <!-- Product Selector Bar -->
+      <div class="product-selector-bar">
+        <div class="selector-col">
+          <label for="select-sku">Select Product:</label>
+          <select id="select-sku" class="form-select">
+            <!-- Populated via JS -->
+          </select>
+        </div>
+
+        <div class="selector-col">
+          <label for="select-facility">Warehouse Facility:</label>
+          <select id="select-facility" class="form-select">
+            <option value="CA_1">CA_1 (Los Angeles Super-Hub)</option>
+            <option value="CA_2">CA_2 (Oakland Gateway Hub)</option>
+            <option value="CA_3">CA_3 (San Diego Cross-Border)</option>
+            <option value="CA_4">CA_4 (Central Valley Depot)</option>
+            <option value="TX_1">TX_1 (Dallas DFW Logistics)</option>
+            <option value="TX_2">TX_2 (Houston Gulf Port Hub)</option>
+            <option value="TX_3">TX_3 (Austin Corridor Hub)</option>
+            <option value="WI_1">WI_1 (Milwaukee Center)</option>
+            <option value="WI_2">WI_2 (Green Bay North)</option>
+            <option value="WI_3">WI_3 (Madison Depot)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 3-Step Prediction & Risk Breakdown (Visual Story) -->
+      <div class="prediction-story-grid">
+        <!-- Card 1: What did the model predict? -->
+        <div class="story-step-card">
+          <div class="step-num-pill">1. The ML Prediction</div>
+          <h3 class="step-heading">28-Day Demand Forecast</h3>
+          <p class="step-subtext" id="story-forecast-subtext">Loading AI demand curve...</p>
+          
+          <div class="chart-container-compact">
+            <canvas id="productForecastChart"></canvas>
+          </div>
+
+          <div class="step-stat-callout" id="story-forecast-stat">
+            <strong>Model Prediction:</strong> Avg 14.2 units/day.
+          </div>
+        </div>
+
+        <!-- Card 2: What is the risk / problem? -->
+        <div class="story-step-card">
+          <div class="step-num-pill danger">2. The Disruption Risk</div>
+          <h3 class="step-heading">Inventory Burn-Down &amp; Stockout</h3>
+          <p class="step-subtext" id="story-burndown-subtext">Calculating remaining runway...</p>
+
+          <div class="chart-container-compact">
+            <canvas id="productBurndownChart"></canvas>
+          </div>
+
+          <div class="step-stat-callout danger" id="story-burndown-stat">
+            <strong>Stockout Alert:</strong> Runs out of stock on Day 4.
+          </div>
+        </div>
+
+        <!-- Card 3: What should the company do? -->
+        <div class="story-step-card highlight">
+          <div class="step-num-pill success">3. The Prescriptive Decision</div>
+          <h3 class="step-heading">Recommended Operational Fix</h3>
+          <p class="step-subtext">AI-optimized decision with maximum ROI to protect revenue before customers are affected:</p>
+
+          <div class="decision-action-box" id="story-action-box">
+            <!-- Populated via JS -->
+          </div>
+
+          <button class="btn btn-success btn-block btn-lg" id="btn-approve-selected-action">
+            &#10003; Approve &amp; Execute This Fix
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =============================================================== -->
+    <!-- SECTION 2: TOP PRIORITY ACTIONS (WHAT TO DO TODAY)              -->
+    <!-- =============================================================== -->
+    <section class="section-card mt-4">
+      <div class="section-header">
+        <div>
+          <span class="step-badge success">DECISION OPTIMIZATION</span>
+          <h2 class="section-title">Top Urgent Mitigations for Operations Today</h2>
+          <p class="section-desc">Ranked by net financial revenue protected. Click "Approve" to authorize the stock transfer or expedited purchase order.</p>
+        </div>
+      </div>
+
+      <div class="actions-list-container" id="top-actions-container">
+        <!-- Populated via JS -->
+      </div>
+    </section>
+
+    <!-- =============================================================== -->
+    <!-- SECTION 3: SIMPLE "WHAT-IF" SCENARIO SIMULATOR                  -->
+    <!-- =============================================================== -->
+    <section class="section-card mt-4">
+      <div class="section-header">
+        <div>
+          <span class="step-badge">WHAT-IF STRESS TEST</span>
+          <h2 class="section-title">Test External Shocks &amp; Supply Chain Disruptions</h2>
+          <p class="section-desc">See in real time what happens to your stockouts and revenue if demand surges or supplier deliveries are delayed.</p>
+        </div>
+      </div>
+
+      <div class="what-if-simple-grid">
+        <div class="sliders-panel">
+          <div class="slider-item">
+            <div class="slider-label">
+              <span>Customer Demand Surge Factor</span>
+              <strong id="sim-surge-label">+0%</strong>
+            </div>
+            <input type="range" id="sim-surge-slider" min="0" max="100" step="5" value="0">
+            <div class="slider-scale"><span>0% (Baseline)</span><span>+25%</span><span>+50% (Holiday Rush)</span><span>+100%</span></div>
+          </div>
+
+          <div class="slider-item mt-3">
+            <div class="slider-label">
+              <span>Inbound Supplier Lead Time Delay</span>
+              <strong id="sim-delay-label">+0 Days</strong>
+            </div>
+            <input type="range" id="sim-delay-slider" min="0" max="14" step="1" value="0">
+            <div class="slider-scale"><span>0 Days (On-Time)</span><span>+4 Days (Port Dwell)</span><span>+10 Days</span><span>+14 Days</span></div>
+          </div>
+
+          <button class="btn btn-primary btn-block mt-3" id="btn-run-simple-sim">
+            Recalculate Network Stress Test
+          </button>
+        </div>
+
+        <div class="sim-result-panel">
+          <div class="sim-metrics-row">
+            <div class="sim-metric-box">
+              <span class="sim-metric-label">Critical Stockouts (&lt;7d)</span>
+              <div class="sim-metric-val">
+                <span class="val-old" id="sim-old-stockouts">1,059</span>
+                <span class="val-arrow">&rarr;</span>
+                <span class="val-new text-danger" id="sim-new-stockouts">1,059</span>
+              </div>
+              <span class="sim-metric-delta" id="sim-delta-stockouts">+0 SKUs</span>
+            </div>
+
+            <div class="sim-metric-box">
+              <span class="sim-metric-label">30-Day Lost Sales Exposure</span>
+              <div class="sim-metric-val">
+                <span class="val-old" id="sim-old-loss">$666,342</span>
+                <span class="val-arrow">&rarr;</span>
+                <span class="val-new text-danger" id="sim-new-loss">$666,342</span>
+              </div>
+              <span class="sim-metric-delta" id="sim-delta-loss">+$0</span>
+            </div>
+          </div>
+
+          <div class="sim-advisory-note" id="sim-advisory-message">
+            Move the sliders above or click "Recalculate Network Stress Test" to evaluate supply chain vulnerability under demand shocks.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =============================================================== -->
+    <!-- SECTION 4: FULL PRODUCT CATALOG TABLE                           -->
+    <!-- =============================================================== -->
+    <section class="section-card mt-4">
+      <div class="section-header">
+        <div>
+          <span class="step-badge">PRODUCT CATALOG MATRIX</span>
+          <h2 class="section-title">All 500 Products Across 10 Warehouses</h2>
+          <p class="section-desc">Search any product or filter by risk level. Click any row to load it into the Prediction Explorer above.</p>
+        </div>
+        <div class="catalog-count-badge" id="catalog-count-indicator">
+          Showing 5,000 Total Nodes
+        </div>
+      </div>
+
+      <!-- Search & Filters -->
+      <div class="catalog-filters-bar">
+        <input type="text" id="table-search-input" placeholder="Search product name, SKU code..." class="form-input">
+        
+        <select id="table-filter-risk" class="form-select">
+          <option value="ALL">All Risk Levels</option>
+          <option value="CRITICAL">Critical Stockouts (&lt;7 Days)</option>
+          <option value="HIGH">High Risk (8-14 Days)</option>
+          <option value="MODERATE">Moderate (15-21 Days)</option>
+          <option value="HEALTHY">Healthy Buffer (&gt;21 Days)</option>
+        </select>
+
+        <select id="table-filter-category" class="form-select">
+          <option value="ALL">All Categories</option>
+          <option value="FOODS">Foods &amp; Groceries</option>
+          <option value="HOUSEHOLD">Household Essentials</option>
+          <option value="HOBBIES">Hobbies &amp; Recreation</option>
+        </select>
+      </div>
+
+      <!-- Clean Minimal Table -->
+      <div class="table-responsive">
+        <table class="clean-table">
+          <thead>
+            <tr>
+              <th>Product Name</th>
+              <th>Warehouse</th>
+              <th>Price</th>
+              <th>On-Hand Stock</th>
+              <th>Daily Demand</th>
+              <th>Runway</th>
+              <th>Stockout Timing</th>
+              <th>Lost Sales ($)</th>
+              <th>Recommended Fix</th>
+            </tr>
+          </thead>
+          <tbody id="clean-table-body">
+            <!-- Populated via JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Clean Pagination -->
+      <div class="clean-pagination">
+        <button class="btn btn-outline btn-xs" id="clean-btn-prev">&larr; Previous</button>
+        <span class="pagination-page-label" id="clean-page-label">Page 1 of 200</span>
+        <button class="btn btn-outline btn-xs" id="clean-btn-next">Next &rarr;</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Executive Briefing Modal -->
+  <div class="modal-backdrop d-none" id="briefing-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>C-Suite Executive Supply Chain Briefing</h3>
+        <button class="modal-close" id="btn-close-briefing">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="briefing-text" id="briefing-markdown-body">
+          Loading executive briefing...
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline btn-sm" id="btn-copy-briefing">Copy to Clipboard</button>
+        <button class="btn btn-primary btn-sm" onclick="window.print()">Print / Export PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Popups -->
+  <div class="toast-tray" id="toast-tray"></div>
+
+  <!-- JavaScript Application -->
+  <script src="app.js"></script>
+</body>
+</html>
