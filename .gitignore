@@ -1,0 +1,10 @@
+# Large datasets (keep locally)
+sales_train_evaluation.csv
+sales_train_validation.csv
+sell_prices.csv
+
+# Python cache and virtual environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
